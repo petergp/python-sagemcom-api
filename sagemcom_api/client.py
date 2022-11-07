@@ -168,6 +168,15 @@ class SagemcomClient:
 
         return value
 
+    def __get_response_uri(self, response, index=0):
+        """Retrieve response value from value."""
+        try:
+            value = self.__get_response(response, index)["uri"]
+        except KeyError:
+            value = None
+
+        return value
+
     async def __api_request_async(self, actions, priority=False):
         """Build request to the internal JSON-req API."""
         self.__generate_request_id()
@@ -310,6 +319,28 @@ class SagemcomClient:
 
         response = await self.__api_request_async([actions], False)
         data = self.__get_response_value(response)
+
+        return data
+
+    async def get_vendor_log_download_uri_by_xpath(
+        self, xpath: str
+    ) -> Dict:
+        """
+        Retrive vendor log download uri using XPath.
+
+        :param xpath: path expression
+        """
+        actions = {
+            "id": 0,
+            "method": "getVendorLogDownloadURI",
+            "xpath": urllib.parse.quote(xpath),
+            "parameters": {
+                "FileName": "logFile"
+            },
+        }
+
+        response = await self.__api_request_async([actions], False)
+        data = self.__get_response_uri(response)
 
         return data
 
