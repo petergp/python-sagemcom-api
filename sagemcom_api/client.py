@@ -197,9 +197,14 @@ class SagemcomClient:
                 "auth-key": self._auth_key,
             }
         }
-
+        data = "req=" + json.dumps(payload, separators=(",", ":"))
+        headers = {
+            'Content-Length': str(len(data))
+        }
         async with self.session.post(
-            api_host, data="req=" + json.dumps(payload, separators=(",", ":"))
+            api_host,
+            data=data,
+            headers=headers
         ) as response:
 
             if response.status == 400:
